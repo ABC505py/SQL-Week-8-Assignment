@@ -1,0 +1,62 @@
+-- Create the database
+CREATE DATABASE LibraryDB;
+USE LibraryDB;
+
+-- Members table
+CREATE TABLE Members (
+    MemberID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Phone VARCHAR(20),
+    MembershipDate DATE NOT NULL
+);
+
+-- Books table
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY AUTO_INCREMENT,
+    Title VARCHAR(255) NOT NULL,
+    Author VARCHAR(100) NOT NULL,
+    ISBN VARCHAR(20) UNIQUE NOT NULL,
+    Publisher VARCHAR(100),
+    YearPublished YEAR
+);
+
+-- Borrowings table (M-M relationship between Members and Books)
+CREATE TABLE Borrowings (
+    BorrowingID INT PRIMARY KEY AUTO_INCREMENT,
+    MemberID INT NOT NULL,
+    BookID INT NOT NULL,
+    BorrowDate DATE NOT NULL,
+    ReturnDate DATE,
+    FOREIGN KEY (MemberID) REFERENCES Members(MemberID),
+    FOREIGN KEY (BookID) REFERENCES Books(BookID)
+);
+
+-- Categories table
+CREATE TABLE Categories (
+    CategoryID INT PRIMARY KEY AUTO_INCREMENT,
+    CategoryName VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- BookCategories table (M-M between Books and Categories)
+CREATE TABLE BookCategories (
+    BookID INT NOT NULL,
+    CategoryID INT NOT NULL,
+    PRIMARY KEY (BookID, CategoryID),
+    FOREIGN KEY (BookID) REFERENCES Books(BookID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+);
+
+-- Librarians table
+CREATE TABLE Librarians (
+    LibrarianID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- IssuedBy table (1-M: Borrowing issued by Librarian)
+ALTER TABLE Borrowings
+ADD LibrarianID INT,
+ADD FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID);
